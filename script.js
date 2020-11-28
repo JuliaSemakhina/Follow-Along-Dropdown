@@ -1,15 +1,31 @@
-const nav = document.querySelector('#main');
-let topNav = nav.offsetTop;
+const triggers = document.querySelectorAll('.cool > li');
+const background = document.querySelector('.dropdownBackground');
+const nav= document.querySelector('.top');
 
-function fixNav() {
-	if(window.scrollY >= topNav){
-		document.body.style.paddingTop = nav.offsetHeight + 'px';
-		document.body.classList.add('fixed-nav');
-	} else {
-		
-		document.body.classList.remove('fixed-nav');
-		document.body.style.paddingTop = 0;
-	}
+function handleEnter(){
+	this.classList.add('trigger-enter');
+	setTimeout(()=>this.classList.contains('trigger-enter') && this.classList.add('trigger-enter-active'), 150);
+	background.classList.add('open');
+
+	const dropdown = this.querySelector('.dropdown');
+	const dropdownCoords = dropdown.getBoundingClientRect();
+	const navCoords = nav.getBoundingClientRect();
+	const coords = {
+		height: dropdownCoords.height,
+		width: dropdownCoords.width,
+		top: dropdownCoords.top - navCoords.top,
+		left: dropdownCoords.left - navCoords.left
+	};
+	console.log(coords);
+	background.style.setProperty('width', `${coords.width}px`);
+	background.style.setProperty('height', `${coords.height}px`);
+	background.style.setProperty('transform', `translate(${coords.left}px, ${coords.top}px)`);
 };
 
-window.addEventListener('scroll', fixNav);
+function handleLeave(){
+	this.classList.remove('trigger-enter', 'trigger-enter-active');
+	background.classList.remove('open');
+}
+
+triggers.forEach(item=>item.addEventListener('mouseenter', handleEnter));
+triggers.forEach(item=>item.addEventListener('mouseleave', handleLeave));
